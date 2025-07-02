@@ -1,6 +1,31 @@
+using Microsoft.EntityFrameworkCore;
+using Project_Learning_Basic_REST_API_DotNet_Back_End.Data;
+using Project_Learning_Basic_REST_API_DotNet_Back_End.Interfaces;
+using Project_Learning_Basic_REST_API_DotNet_Back_End.Models.Config;
+using Project_Learning_Basic_REST_API_DotNet_Back_End.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
+builder.Services.Configure<DatabaseSetting>(builder.Configuration.GetSection("DatabaseSetting"));
+
+var dbSetting = builder.Configuration.GetSection("DatabaseSetting").Get<DatabaseSetting>();
+
+if (dbSetting is null || string.IsNullOrWhiteSpace(dbSetting.ConnectionString))
+{
+    throw new InvalidOperationException("Database Setting Or Connection String Is Not Configured");
+}
+
+builder.Services.AddDbContext<AppDatabaseContext>((options) => options.UseNpgsql(dbSetting.ConnectionString));
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 // Add services to the container.
+builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -35,6 +60,10 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.UseAuthentication();
+
+app.MapControllers();
 
 app.Run();
 
