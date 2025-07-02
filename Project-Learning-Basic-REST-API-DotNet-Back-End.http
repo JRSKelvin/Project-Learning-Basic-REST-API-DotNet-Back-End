@@ -1,0 +1,6 @@
+@Project_Learning_Basic_REST_API_DotNet_Back_End_HostAddress = http://localhost:5210
+
+GET {{Project_Learning_Basic_REST_API_DotNet_Back_End_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
