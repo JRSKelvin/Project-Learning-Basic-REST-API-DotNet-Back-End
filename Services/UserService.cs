@@ -16,7 +16,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         {
             return await _context.Users.ToListAsync();
         }
-        public async Task<User?> GetByIdAsync(int id)
+        public async Task<User?> GetByIdAsync(Guid id)
         {
             return await _context.Users.FindAsync(id);
         }
@@ -26,7 +26,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
             await _context.SaveChangesAsync();
             return user;
         }
-        public async Task<User?> UpdateAsync(int id, User updated)
+        public async Task<User?> UpdateAsync(Guid id, User updated)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
@@ -45,7 +45,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
             await _context.SaveChangesAsync();
             return user;
         }
-        public async Task<User?> DeleteAsync(int id)
+        public async Task<User?> DeleteAsync(Guid id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return null;

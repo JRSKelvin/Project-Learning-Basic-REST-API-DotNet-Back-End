@@ -24,7 +24,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             return Ok(users);
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var user = await _userService.GetByIdAsync(id);
             return user is null ? NotFound() : Ok(user);
@@ -37,7 +37,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, UpdateUserRequest request)
+        public async Task<IActionResult> Update(Guid id, UpdateUserRequest request)
         {
             var user = _mapper.Map<User>(request);
             var updatedUser = await _userService.UpdateAsync(id, user);
@@ -45,7 +45,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             return Ok(updatedUser);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var deletedUser = await _userService.DeleteAsync(id);
             if (deletedUser == null) return NotFound();
