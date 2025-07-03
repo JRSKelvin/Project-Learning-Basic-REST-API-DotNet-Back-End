@@ -7,13 +7,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
 {
     public class UserService : IUserService
     {
-        /*
-        private readonly AppDatabaseContext _context;
-        public UserService(AppDatabaseContext context)
-        {
-            _context = context;
-        }
-        */
         private readonly AppDatabaseContext? _context;
         private readonly bool _useDummy;
         private readonly List<User> _dummyData = new()
@@ -51,25 +44,16 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         public async Task<List<User>> GetAllAsync()
         {
             if (_useDummy) return _dummyData;
-            /*
-            return await _context.Users.ToListAsync();
-            */
             return await _context!.Users.ToListAsync();
         }
         public async Task<User?> GetByIdAsync(Guid id)
         {
             if (_useDummy) return _dummyData.FirstOrDefault((u) => u.Id == id);
-            /*
-            return await _context.Users.FindAsync(id);
-            */
             return await _context!.Users.FindAsync(id);
         }
         public async Task<User> CreateAsync(User user)
         {
             if (_useDummy) return user;
-            /*
-            _context.Users.Add(user);
-            */
             _context!.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
@@ -88,9 +72,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
                     PhoneNumber = updated.PhoneNumber ?? original.PhoneNumber,
                 };
             }
-            /*
-            var user = await _context.Users.FindAsync(id);
-            */
             var user = await _context!.Users.FindAsync(id);
             if (user == null) return null;
             if (updated.Name != null)
@@ -115,9 +96,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
                 var original = _dummyData.FirstOrDefault((u) => u.Id == id);
                 return original;
             }
-            /*
-            var user = await _context.Users.FindAsync(id);
-            */
             var user = await _context!.Users.FindAsync(id);
             if (user == null) return null;
             _context.Users.Remove(user);
