@@ -14,10 +14,20 @@ var dbSetting = builder.Configuration.GetSection("DatabaseSetting").Get<Database
 
 if (dbSetting is null || string.IsNullOrWhiteSpace(dbSetting.ConnectionString))
 {
+    /*
     throw new InvalidOperationException("Database Setting Or Connection String Is Not Configured");
+    */
+    Console.WriteLine("⚠️ Database Setting Or Connection String Is Not Configured And App Will Run In Dummy Mode");
+}
+else
+{
+    builder.Services.AddDbContext<AppDatabaseContext>((options) => options.UseNpgsql(dbSetting.ConnectionString));
+    Console.WriteLine("⚠️ Database Setting Or Connection String Is Configured And App Will Try To Run In Database Mode");
 }
 
+/*
 builder.Services.AddDbContext<AppDatabaseContext>((options) => options.UseNpgsql(dbSetting.ConnectionString));
+*/
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -62,6 +72,8 @@ app.MapGet("/weatherforecast", () =>
 .WithOpenApi();
 
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
