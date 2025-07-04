@@ -17,6 +17,9 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
                 Name = "Dummy User",
                 Email = "dummy-user@email.com",
                 PhoneNumber = "000-0000-0000",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("DummyUser"),
+                RefreshToken = "DummyRefreshToken",
+                RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(30),
             },
         };
         public UserService(IServiceProvider serviceProvider)

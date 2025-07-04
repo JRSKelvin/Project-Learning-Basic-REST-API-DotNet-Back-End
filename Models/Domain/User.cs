@@ -12,6 +12,10 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Models.Domain
         public string Email { get; set; } = string.Empty;
         [Required]
         public string PhoneNumber { get; set; } = string.Empty;
+        [Required]
+        public string PasswordHash { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+        public DateTime? RefreshTokenExpiryTime { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
