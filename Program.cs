@@ -1,4 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Data;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Interfaces;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Models.Config;
@@ -6,8 +9,10 @@ using Project_Learning_Basic_REST_API_DotNet_Back_End.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/* Retrieve Configuration From App Setting Local File */
 builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
+/* Configure Dependency Injection For Database Setting */
 builder.Services.Configure<DatabaseSetting>(builder.Configuration.GetSection("DatabaseSetting"));
 
 var dbSetting = builder.Configuration.GetSection("DatabaseSetting").Get<DatabaseSetting>();
@@ -22,8 +27,42 @@ else
     Console.WriteLine("⚠️ Database Setting Or Connection String Is Configured And App Will Try To Run In Database Mode");
 }
 
+/* Configure Dependency Injection For JWT Setting */
+
+builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JwtSetting"));
+
+var jwtSetting = builder.Configuration.GetSection("JwtSetting").Get<JwtSetting>();
+
+if (jwtSetting is null || string.IsNullOrWhiteSpace(jwtSetting.AccessSecret))
+{
+    throw new InvalidOperationException("JWT Setting Or Access Secret Is Not Configured");
+}
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer((options) =>
+{
+    var key = Encoding.UTF8.GetBytes(jwtSetting.AccessSecret);
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSetting.Issuer,
+        ValidAudience = jwtSetting.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddAuthorization();
+
+/* Register Additional Service */
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+/* Register Additional Service */
+
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container.
