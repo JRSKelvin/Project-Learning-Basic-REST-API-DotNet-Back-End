@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Data;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Interfaces;
+using Project_Learning_Basic_REST_API_DotNet_Back_End.Middleware;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Models.Config;
 using Project_Learning_Basic_REST_API_DotNet_Back_End.Services;
 
@@ -58,6 +59,9 @@ builder.Services.AddAuthorization();
 /* Register Additional Service */
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddLogging();
 
 /* Register Additional Service */
 
@@ -102,6 +106,10 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.UseHttpsRedirection();
+
+app.UseExceptionHandler();
 
 app.UseAuthentication();
 
