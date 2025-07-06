@@ -7,7 +7,14 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
 {
     public class UserService : IUserService
     {
+        private readonly AppModeUserService _appModeUserService;
         private readonly AppDatabaseContext? _context;
+        public UserService(AppModeUserService appModeUserService, AppDatabaseContext? context)
+        {
+            _appModeUserService = appModeUserService;
+            _context = context;
+        }
+        /*
         private readonly bool _useDummy;
         private readonly List<User> _dummyData = new()
         {
@@ -44,28 +51,44 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
                 _useDummy = true;
             }
         }
+        */
         public async Task<List<User>> GetAllAsync()
         {
+            /*
             if (_useDummy) return _dummyData;
+            */
+            if (_appModeUserService.UseDummyMode) return _appModeUserService.Users;
             return await _context!.Users.ToListAsync();
         }
         public async Task<User?> GetByIdAsync(Guid id)
         {
+            /*
             if (_useDummy) return _dummyData.FirstOrDefault((u) => u.Id == id);
+            */
+            if (_appModeUserService.UseDummyMode) return _appModeUserService.Users.FirstOrDefault((u) => u.Id == id);
             return await _context!.Users.FindAsync(id);
         }
         public async Task<User> CreateAsync(User user)
         {
+            /*
             if (_useDummy) return user;
+            */
+            if (_appModeUserService.UseDummyMode) return user;
             _context!.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
         }
         public async Task<User?> UpdateAsync(Guid id, User updated)
         {
+            /*
             if (_useDummy)
+            */
+            if (_appModeUserService.UseDummyMode)
             {
+                /*
                 var original = _dummyData.FirstOrDefault((u) => u.Id == id);
+                */
+                var original = _appModeUserService.Users.FirstOrDefault((u) => u.Id == id);
                 if (original == null) return null;
                 return new User
                 {
@@ -94,9 +117,15 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<User?> DeleteAsync(Guid id)
         {
+            /*
             if (_useDummy)
+            */
+            if (_appModeUserService.UseDummyMode)
             {
+                /*
                 var original = _dummyData.FirstOrDefault((u) => u.Id == id);
+                */
+                var original = _appModeUserService.Users.FirstOrDefault((u) => u.Id == id);
                 return original;
             }
             var user = await _context!.Users.FindAsync(id);

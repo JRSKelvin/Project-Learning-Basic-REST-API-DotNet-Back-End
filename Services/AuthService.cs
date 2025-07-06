@@ -11,9 +11,18 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly AppModeUserService _appModeUserService;
         private readonly AppDatabaseContext? _context;
         private readonly IJwtService _jwtService;
         private readonly JwtSetting _jwtSetting;
+        public AuthService(AppModeUserService appModeUserService, AppDatabaseContext? context, IJwtService jwtService, IOptions<JwtSetting> jwtOptions)
+        {
+            _appModeUserService = appModeUserService;
+            _context = context;
+            _jwtService = jwtService;
+            _jwtSetting = jwtOptions.Value;
+        }
+        /*
         private readonly bool _useDummy;
         private readonly List<User> _dummyData = new()
         {
@@ -52,6 +61,7 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
                 _useDummy = true;
             }
         }
+        */
         private static UserResponse MapUser(User user) => new()
         {
             Id = user.Id,
@@ -61,9 +71,15 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         };
         public async Task<SignUpResponse> SignUpAsync(SignUpRequest request)
         {
+            /*
             if (_useDummy)
+            */
+            if (_appModeUserService.UseDummyMode)
             {
+                /*
                 var dummyUser = _dummyData.First();
+                */
+                var dummyUser = _appModeUserService.Users.First();
                 return new SignUpResponse { User = MapUser(dummyUser) };
             }
             if (await _context!.Users.AnyAsync(u => u.Email == request.Email)) throw new Exception("User Already Exists");
@@ -83,9 +99,15 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<SignInResponse> SignInAsync(SignInRequest request)
         {
+            /*
             if (_useDummy)
+            */
+            if (_appModeUserService.UseDummyMode)
             {
+                /*
                 var dummyUser = _dummyData.FirstOrDefault((u) => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && BCrypt.Net.BCrypt.Verify(request.Password, u.PasswordHash));
+                */
+                var dummyUser = _appModeUserService.Users.FirstOrDefault((u) => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && BCrypt.Net.BCrypt.Verify(request.Password, u.PasswordHash));
                 if (dummyUser == null) throw new UnauthorizedAccessException("Invalid Username Or Password");
                 var access = _jwtService.GenerateAccessToken(dummyUser);
                 return new SignInResponse
@@ -111,9 +133,15 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<RefreshTokenResponse> RefreshTokenAsync(string refreshToken)
         {
+            /*
             if (_useDummy)
+            */
+            if (_appModeUserService.UseDummyMode)
             {
+                /*
                 var dummyUser = _dummyData.FirstOrDefault((u) => u.RefreshToken == refreshToken);
+                */
+                var dummyUser = _appModeUserService.Users.FirstOrDefault((u) => u.RefreshToken == refreshToken);
                 if (dummyUser == null) throw new UnauthorizedAccessException("Invalid Refresh Token");
                 var newAccess = _jwtService.GenerateAccessToken(dummyUser);
                 return new RefreshTokenResponse
@@ -141,9 +169,15 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         {
             var email = principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(email)) throw new UnauthorizedAccessException("No Email Claim Found");
+            /*
             if (_useDummy)
+            */
+            if (_appModeUserService.UseDummyMode)
             {
+                /*
                 var dummyUser = _dummyData.FirstOrDefault((u) => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+                */
+                var dummyUser = _appModeUserService.Users.FirstOrDefault((u) => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
                 if (dummyUser != null) return new GetCurrentUserMeResponse { User = MapUser(dummyUser) };
                 throw new KeyNotFoundException("User Not Found");
             }

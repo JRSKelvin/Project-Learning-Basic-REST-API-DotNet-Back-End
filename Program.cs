@@ -81,6 +81,7 @@ builder.Services.AddLogging();
 
 /* Register Additional Service */
 
+builder.Services.AddSingleton<AppModeUserService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
