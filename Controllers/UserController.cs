@@ -27,9 +27,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             var users = await _userService.GetAllAsync();
             var response = new SuccessResponse<object>((int)HttpStatusCode.OK, "Data Retrieved Successfully", users);
             return StatusCode(response.StatusCode, response);
-            /*
-            return Ok(users);
-            */
         }
         [Authorize]
         [HttpGet("{id}")]
@@ -43,9 +40,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             }
             var response = new SuccessResponse<object>((int)HttpStatusCode.OK, "Data Retrieved Successfully", user);
             return StatusCode(response.StatusCode, response);
-            /*
-            return user is null ? NotFound() : Ok(user);
-            */
         }
         [Authorize]
         [HttpPost]
@@ -55,9 +49,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             var created = await _userService.CreateAsync(user);
             var response = new SuccessResponse<object>((int)HttpStatusCode.Created, "Data Created Successfully", created);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, response);
-            /*
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-            */
         }
         [Authorize]
         [HttpPut("{id}")]
@@ -72,10 +63,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             }
             var response = new SuccessResponse<object>((int)HttpStatusCode.OK, "Data Updated Successfully", updatedUser);
             return StatusCode(response.StatusCode, response);
-            /*
-            if (updatedUser == null) return NotFound();
-            return Ok(updatedUser);
-            */
         }
         [Authorize]
         [HttpDelete("{id}")]
@@ -89,10 +76,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Controllers
             }
             var response = new SuccessResponse<object>((int)HttpStatusCode.OK, "Data Deleted Successfully", deletedUser);
             return StatusCode(response.StatusCode, response);
-            /*
-            if (deletedUser == null) return NotFound();
-            return Ok(deletedUser);
-            */
         }
     }
 }
