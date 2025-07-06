@@ -105,6 +105,7 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast")
+.WithTags("App Example")
 .WithOpenApi();
 
 app.UseHttpsRedirection();
