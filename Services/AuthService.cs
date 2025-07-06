@@ -22,46 +22,6 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
             _jwtService = jwtService;
             _jwtSetting = jwtOptions.Value;
         }
-        /*
-        private readonly bool _useDummy;
-        private readonly List<User> _dummyData = new()
-        {
-            new User
-            {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                Name = "Dummy User",
-                Email = "dummy-user@email.com",
-                PhoneNumber = "000-0000-0000",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("DummyUser"),
-                RefreshToken = "DummyRefreshToken",
-                RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(30),
-            },
-        };
-        public AuthService(IServiceProvider serviceProvider, IJwtService jwtService, IOptions<JwtSetting> jwtOptions)
-        {
-            _jwtService = jwtService;
-            _jwtSetting = jwtOptions.Value;
-            try
-            {
-                _context = serviceProvider.GetService<AppDatabaseContext>();
-                if (_context == null)
-                {
-                    Console.WriteLine("⚠️ Database Context Not Registered And App Will Run In Dummy Mode");
-                    _useDummy = true;
-                    return;
-                }
-                _context.Database.OpenConnection();
-                _context.Database.CloseConnection();
-                _useDummy = false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("⚠️ Failed To Connect To Database And App Will Run In Dummy Mode");
-                Console.WriteLine(ex.Message);
-                _useDummy = true;
-            }
-        }
-        */
         private static UserResponse MapUser(User user) => new()
         {
             Id = user.Id,
@@ -71,14 +31,8 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         };
         public async Task<SignUpResponse> SignUpAsync(SignUpRequest request)
         {
-            /*
-            if (_useDummy)
-            */
             if (_appModeUserService.UseDummyMode)
             {
-                /*
-                var dummyUser = _dummyData.First();
-                */
                 var dummyUser = _appModeUserService.Users.First();
                 return new SignUpResponse { User = MapUser(dummyUser) };
             }
@@ -99,14 +53,8 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<SignInResponse> SignInAsync(SignInRequest request)
         {
-            /*
-            if (_useDummy)
-            */
             if (_appModeUserService.UseDummyMode)
             {
-                /*
-                var dummyUser = _dummyData.FirstOrDefault((u) => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && BCrypt.Net.BCrypt.Verify(request.Password, u.PasswordHash));
-                */
                 var dummyUser = _appModeUserService.Users.FirstOrDefault((u) => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && BCrypt.Net.BCrypt.Verify(request.Password, u.PasswordHash));
                 if (dummyUser == null) throw new UnauthorizedAccessException("Invalid Username Or Password");
                 var access = _jwtService.GenerateAccessToken(dummyUser);
@@ -133,14 +81,8 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<RefreshTokenResponse> RefreshTokenAsync(string refreshToken)
         {
-            /*
-            if (_useDummy)
-            */
             if (_appModeUserService.UseDummyMode)
             {
-                /*
-                var dummyUser = _dummyData.FirstOrDefault((u) => u.RefreshToken == refreshToken);
-                */
                 var dummyUser = _appModeUserService.Users.FirstOrDefault((u) => u.RefreshToken == refreshToken);
                 if (dummyUser == null) throw new UnauthorizedAccessException("Invalid Refresh Token");
                 var newAccess = _jwtService.GenerateAccessToken(dummyUser);
@@ -169,14 +111,8 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         {
             var email = principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(email)) throw new UnauthorizedAccessException("No Email Claim Found");
-            /*
-            if (_useDummy)
-            */
             if (_appModeUserService.UseDummyMode)
             {
-                /*
-                var dummyUser = _dummyData.FirstOrDefault((u) => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-                */
                 var dummyUser = _appModeUserService.Users.FirstOrDefault((u) => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
                 if (dummyUser != null) return new GetCurrentUserMeResponse { User = MapUser(dummyUser) };
                 throw new KeyNotFoundException("User Not Found");

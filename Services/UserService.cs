@@ -14,65 +14,18 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
             _appModeUserService = appModeUserService;
             _context = context;
         }
-        /*
-        private readonly bool _useDummy;
-        private readonly List<User> _dummyData = new()
-        {
-            new User
-            {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                Name = "Dummy User",
-                Email = "dummy-user@email.com",
-                PhoneNumber = "000-0000-0000",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("DummyUser"),
-                RefreshToken = "DummyRefreshToken",
-                RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(30),
-            },
-        };
-        public UserService(IServiceProvider serviceProvider)
-        {
-            try
-            {
-                _context = serviceProvider.GetService<AppDatabaseContext>();
-                if (_context == null)
-                {
-                    Console.WriteLine("⚠️ Database Context Not Registered And App Will Run In Dummy Mode");
-                    _useDummy = true;
-                    return;
-                }
-                _context.Database.OpenConnection();
-                _context.Database.CloseConnection();
-                _useDummy = false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("⚠️ Failed To Connect To Database And App Will Run In Dummy Mode");
-                Console.WriteLine(ex.Message);
-                _useDummy = true;
-            }
-        }
-        */
         public async Task<List<User>> GetAllAsync()
         {
-            /*
-            if (_useDummy) return _dummyData;
-            */
             if (_appModeUserService.UseDummyMode) return _appModeUserService.Users;
             return await _context!.Users.ToListAsync();
         }
         public async Task<User?> GetByIdAsync(Guid id)
         {
-            /*
-            if (_useDummy) return _dummyData.FirstOrDefault((u) => u.Id == id);
-            */
             if (_appModeUserService.UseDummyMode) return _appModeUserService.Users.FirstOrDefault((u) => u.Id == id);
             return await _context!.Users.FindAsync(id);
         }
         public async Task<User> CreateAsync(User user)
         {
-            /*
-            if (_useDummy) return user;
-            */
             if (_appModeUserService.UseDummyMode) return user;
             _context!.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -80,14 +33,8 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<User?> UpdateAsync(Guid id, User updated)
         {
-            /*
-            if (_useDummy)
-            */
             if (_appModeUserService.UseDummyMode)
             {
-                /*
-                var original = _dummyData.FirstOrDefault((u) => u.Id == id);
-                */
                 var original = _appModeUserService.Users.FirstOrDefault((u) => u.Id == id);
                 if (original == null) return null;
                 return new User
@@ -117,14 +64,8 @@ namespace Project_Learning_Basic_REST_API_DotNet_Back_End.Services
         }
         public async Task<User?> DeleteAsync(Guid id)
         {
-            /*
-            if (_useDummy)
-            */
             if (_appModeUserService.UseDummyMode)
             {
-                /*
-                var original = _dummyData.FirstOrDefault((u) => u.Id == id);
-                */
                 var original = _appModeUserService.Users.FirstOrDefault((u) => u.Id == id);
                 return original;
             }
